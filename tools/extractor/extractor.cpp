@@ -205,6 +205,49 @@ static int run_C(ArgumentReader args)
 }
 
 #ifdef ENABLE_OPENCL
+static int run_OpenCL(ArgumentReader args)
+{
+	std::ostream * outStream = nullptr;
+
+	if (args.getNumArgs() > 0) {
+
+		std::string inputFile;
+		if (!args.readOption("-i", inputFile)) {
+			std::cerr << "no input file specified!\n";
+			return -1;
+		}
+		llvm::Module * mod = axtor::createModuleFromFile(inputFile);
+
+		if (!mod) {
+			axtor::Log::fail("no input module specified!");
+		}
+
+		axtor::StringVector params;
+		if (args.readOption("-o", 1, params)) {
+			std::string outFile = params.back();
+			outStream = new std::ofstream(outFile.c_str(), std::ios::out);
+		}
+
+		axtor::OCLBackend backend;
+
+		if (outStream) {
+			axtor::OCLModuleInfo modInfo(mod, *outStream);
+			axtor::translateModule(backend, modInfo);
+			delete outStream;
+
+		} else {
+			axtor::OCLModuleInfo modInfo(mod, std::cout);
+			axtor::translateModule(backend, modInfo);
+		}
+
+		return 0;
+	}
+
+	std::cerr << "no input file specified!" << std::endl;
+	dumpHelp();
+	return -1;
+}
+
 static void dump_OpenCL()
 {
 	std::cerr << "Options for the OpenCL Backend (-m OCL)"

@@ -10,12 +10,13 @@
 
 //### supported address spaces
 // PTX-compatible address spaces (do not work)
-#define SPACE_CONSTANT 1
-#define SPACE_LOCAL    2
-#define SPACE_GLOBAL   3
+#define SPACE_GENERIC  0
+#define SPACE_GLOBAL   1
+#define SPACE_LOCAL    3
+#define SPACE_CONSTANT 4
 
 // other address spaces
-#define SPACE_PRIVATE  4
+#define SPACE_PRIVATE  0
 #define SPACE_POINTER  5
 
 #define SPACE_NOPTR 100

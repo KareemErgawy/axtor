@@ -13,6 +13,7 @@
 #include <vector>
 
 #include <axtor/util/llvmLoop.h>
+#include <iostream>
 
 using namespace llvm;
 
@@ -117,14 +118,19 @@ std::string OCLWriter::getAddressSpaceName(uint space)
 	switch (space)
 	{
 	case SPACE_PRIVATE:
+    std::cout << "** space: __private" << std::endl;
 		return "__private";
 	case SPACE_LOCAL:
+    std::cout << "** space: __local" << std::endl;
 		return "__local";
 	case SPACE_GLOBAL:
+    std::cout << "** space: __global" << std::endl;
 		return "__global";
 	case SPACE_CONSTANT:
+    std::cout << "** space: __constant" << std::endl;
 		return "__constant";
 	default:
+    std::cout << "** space: unsupported" << std::endl;
 		Log::warn("encountered unsupported address space (was " + str<uint>(space) + "). Demoting to default adress space.");
 		return "";
 	};
@@ -289,11 +295,12 @@ std::string OCLWriter::getFunctionHeader(llvm::Function * func, IdentifierScope 
 	const llvm::Type * returnType = type->getReturnType();
 
 	//attributes
-	if (modInfo.isKernelFunction(func)) {
+  // FIXME
+	// if (modInfo.isKernelFunction(func)) {
 		builder << "__kernel ";
-	} else if (func->hasFnAttribute(llvm::Attribute::InlineHint) || func->hasFnAttribute(llvm::Attribute::AlwaysInline)) {
-		builder << "inline ";
-	}
+	// } else if (func->hasFnAttribute(llvm::Attribute::InlineHint) || func->hasFnAttribute(llvm::Attribute::AlwaysInline)) {
+	// 	builder << "inline ";
+	// }
 
 
 	//return type
@@ -743,24 +750,24 @@ std::string OCLWriter::unwindPointer(llvm::Value * val, IdentifierScope & locals
 				return "(" + getType(type) + ")(" + elementStr + ")";
 			}
 
+			case llvm::Type::StructTyID:
+			case llvm::Type::ArrayTyID:
+        {
 
-
-			//case llvm::Type::StructTyID:
-			//case llvm::Type::ArrayTyID:
-
-/*					const llvm::ArrayType * arrType = llvm::cast<llvm::ArrayType>(type);
+				const llvm::ArrayType * arrType = llvm::cast<llvm::ArrayType>(type);
 				uint size = arrType->getNumElements();
 				std::string elementStr = getAllNullLiteral(arrType->getElementType());
 
-				std:string accu = "{";
-				for(int i = 0; i < size; ++i)
+				std::string accu = "{";
+				for(unsigned int i = 0; i < size; ++i)
 				{
 					if (i > 0) accu += ", ";
 					accu += elementStr;
 				}
 				accu += "}";
-				return accu;*/
+				return accu;
 
+        }
 			case llvm::Type::DoubleTyID:
 				return "0.0f";
 
@@ -1218,6 +1225,8 @@ std::string OCLWriter::getInstructionAsExpression(llvm::Instruction * inst, Iden
 
 			 const VariableDesc * opDesc = locals.lookUp(op);
 
+       std::cerr << "Arg: ";
+       itArg->dump();
 			 bool isByValue = itArg->hasByValAttr();
 
 			 if (opDesc) {

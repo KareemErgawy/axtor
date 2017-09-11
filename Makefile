@@ -31,8 +31,8 @@ LDFLAGS=-fPIC -Iinclude $(LLVM_LDFLAGS) $(LLVM_LIBS)
 # Feature support
 
 # TODO add tool support for OpenCL backend
-# LIBS += -lAxtor_OCL -lAxtor
-# CXXFLAGS += -DENABLE_OPENCL 
+LIBS += -lAxtor_OCL -lAxtor
+CXXFLAGS += -DENABLE_OPENCL 
 
 # libraries
 include lib/axtor/libAxtor.mk
@@ -50,8 +50,7 @@ include tools/extractor/extractor.mk
 build/%.o: %.cpp
 	mkdir -p $(dir $@)
 	$(CXX) -o $@ $(CXXFLAGS) $^
-	
-	
+
 .PHONY: clean
 clean:
 	rm -rf build/
