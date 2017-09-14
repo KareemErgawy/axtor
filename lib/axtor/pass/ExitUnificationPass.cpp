@@ -49,8 +49,6 @@ char ExitUnificationPass::ID = 0;
 
 		llvm::Loop * parent = loop->getParentLoop();
 
-		loop->dump();
-
 		if (loop->getLoopDepth() <= 1) {
 			std::cerr << "LEE: outer-most multi exit loop\n";
 			return changed; // the exits will not reach this loop again, so we do not care

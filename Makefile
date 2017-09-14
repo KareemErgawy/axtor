@@ -17,7 +17,7 @@ LLVM_LDFLAGS:=`llvm-config --ldflags --system-libs`
 LLVM_LIBS:=`llvm-config --libs`
 
 # compiler customization
-WARNLEVEL=-Wall -Werror -Wno-non-virtual-dtor
+WARNLEVEL=-Wall -Wno-non-virtual-dtor
 OPTLEVEL=-O0 -g
 
 BUILDFLAGS=-D_DEBUG
